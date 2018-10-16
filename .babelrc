@@ -1,0 +1,32 @@
+{
+    "presets": [
+        [
+            "env",
+            {
+                "modules": false,
+                "targets": {
+                    "browsers": [
+                        "ie >= 11"
+                    ]
+                },
+                "useBuiltIns": true,
+                "exclude": [
+                    "transform-async-to-generator",
+                    "transform-regenerator"
+                ]
+            }
+        ],
+        "react"
+    ],
+    "plugins": [
+        "syntax-dynamic-import",
+        "transform-object-rest-spread",
+        "transform-class-properties",
+        [
+            "fast-async",
+            {
+                "spec": true
+            }
+        ]
+    ]
+}
