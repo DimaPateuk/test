@@ -1,12 +1,12 @@
 
-import { once } from 'lodash';
-import { T } from 'ramda';
+import once from 'lodash/once';
 
 (async function () {
 
-    await Promise.resolve();
-    console.log(once);
-    console.log(T);
+    let service = await import('./asyncModuleTest').default;
+    once(() => {});
+    console.log(service);
 
     document.body.innerHTML = '444444';
+
 })();

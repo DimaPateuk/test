@@ -1,24 +1,29 @@
-const { resolve, join } = require('path');
+const { resolve, join, parse } = require('path');
 const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { useBabelLoader } = require('./utils');
-
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
 
 module.exports = {
     mode: 'development',
     entry: [
-        'webpack-dev-server/client?http://localhost:9000/',
-        'webpack/hot/dev-server',
+        '@babel/polyfill',
+        'whatwg-fetch',
         join(__dirname, '../index.js'),
     ],
     devtool: 'source-map',
     output: {
         path: resolve(__dirname, '../dist'),
         filename: '[name].bundle.js',
-        chunkFilename: '[name].chunk.js',
+        chunkFilename: '[name].bundle.js',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
+    },
+    resolveLoader: {
+        modules: ['node_modules', resolve(__dirname, 'loaders')],
     },
     module: {
         rules: [
@@ -31,7 +36,15 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: [useBabelLoader]
+                use: [useBabelLoader],
+            },
+
+            {
+                test: /\.async$/,
+                use: [
+                    useBabelLoader,
+                    { loader: 'async-loader' },
+                ],
             },
             {
                 test: /\.scss$/,
@@ -47,5 +60,42 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new HtmlWebpackPlugin(),
+        // new AsyncChunkNames(), // issue with index.js
+        new BundleAnalyzerPlugin({
+            defaultSizes: 'gzip',
+            analyzerPort: 7777,
+            openAnalyzer: false,
+            statsOptions: {
+                source: false,
+                showPublicPath: true,
+            },
+        }),
     ],
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    chunks: 'all',
+                    name: 'vendor',
+                    test: /node_modules/,
+                    priority: 20,
+                },
+                asyncModuleTest1: {
+                    chunks: 'all',
+                    name: 'asyncModuleTest1',
+                    test: /asyncModuleTest1/,
+                    priority: 15,
+                },
+                common: {
+                    name: 'common',
+                    minChunks: 2,
+                    chunks: 'async',
+                    priority: 10,
+                    reuseExistingChunk: true,
+                    enforce: true,
+                }
+            },
+        },
+    },
+
 };
