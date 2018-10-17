@@ -1,7 +1,7 @@
 {
     "presets": [
         [
-            "env",
+            "@babel/preset-env",
             {
                 "modules": false,
                 "targets": {
@@ -9,24 +9,18 @@
                         "ie >= 11"
                     ]
                 },
-                "useBuiltIns": true,
+                "useBuiltIns": "usage",
                 "exclude": [
                     "transform-async-to-generator",
                     "transform-regenerator"
                 ]
             }
         ],
-        "react"
+        "@babel/preset-react"
     ],
     "plugins": [
-        "syntax-dynamic-import",
-        "transform-object-rest-spread",
+        "async-to-promises",
         "transform-class-properties",
-        [
-            "fast-async",
-            {
-                "spec": true
-            }
-        ]
+        "transform-object-rest-spread",
     ]
 }

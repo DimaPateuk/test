@@ -7,6 +7,8 @@
   "license": "ISC",
   "scripts": {
     "server-i": "cd server && npm i",
-    "frontend-i": "cd frontend && npm i"
+    "server": "cd server && npm run server",
+    "frontend-i": "cd frontend && npm i",
+    "frontend-dev": "cd frontend && npm run dev-server"
   }
 }

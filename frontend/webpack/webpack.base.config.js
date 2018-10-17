@@ -1,6 +1,8 @@
 const { resolve, join } = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { useBabelLoader } = require('./utils');
+
 
 module.exports = {
     mode: 'development',
@@ -13,6 +15,7 @@ module.exports = {
     output: {
         path: resolve(__dirname, '../dist'),
         filename: '[name].bundle.js',
+        chunkFilename: '[name].chunk.js',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
@@ -28,7 +31,7 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                loader: ['babel-loader'],
+                use: [useBabelLoader]
             },
             {
                 test: /\.scss$/,

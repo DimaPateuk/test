@@ -1,0 +1,121 @@
+{
+	"env": {
+		"browser": true,
+		"es6": true,
+		"node": true,
+		"jest": true
+	},
+	"globals": {
+		"logger": false,
+		"isDevelopment": false,
+		"devServer": false
+	},
+	"extends": ["eslint:recommended", "prettier"],
+	"parser": "babel-eslint",
+	"plugins": ["react", "lodash", "ramda"],
+	"rules": {
+		"indent": [
+            "error",
+            4,
+			{
+				"SwitchCase": 1
+			}
+		],
+		"space-before-function-paren": [
+			"warn",
+			{
+				"anonymous": "always",
+				"named": "always",
+				"asyncArrow": "always"
+			}
+		],
+		"keyword-spacing": [
+			"warn",
+			{
+				"before": true,
+				"after": true
+			}
+		],
+		"linebreak-style": ["warn", "unix"],
+		"quotes": ["warn", "single"],
+		"semi": ["warn", "always"],
+		"curly": ["warn", "multi-line"],
+		"brace-style": "warn",
+		"comma-dangle": ["warn", "always-multiline"],
+		"comma-spacing": [
+			"warn",
+			{
+				"before": false,
+				"after": true
+			}
+		],
+		"space-before-blocks": "warn",
+		"object-curly-spacing": ["warn", "always"],
+		"space-infix-ops": [
+			"warn",
+			{
+				"int32Hint": false
+			}
+		],
+		"no-class-assign": "off",
+		"no-console": "warn",
+		"no-extra-bind": "warn",
+		"prefer-arrow-callback": "error",
+		"no-debugger": "warn",
+		"no-unused-vars": "warn",
+		"key-spacing": "warn",
+		"prefer-destructuring": [
+			"warn",
+			{
+				"array": true,
+				"object": true
+			},
+			{
+				"enforceForRenamedProperties": false
+			}
+		],
+		"arrow-parens": ["warn", "always"],
+		"no-useless-constructor": "warn",
+		"max-len": "off",
+		"operator-linebreak": ["warn", "before"],
+		"prefer-const": "warn",
+		"react/jsx-uses-vars": "warn",
+		"react/react-in-jsx-scope": "warn",
+		"react/jsx-uses-react": "warn",
+		"react/jsx-no-duplicate-props": "warn",
+		"react/jsx-boolean-value": "warn",
+		"react/jsx-no-literals": "warn",
+		"react/require-render-return": "warn",
+		"react/no-did-mount-set-state": "warn",
+		"react/no-did-update-set-state": "warn",
+		"react/no-direct-mutation-state": "warn",
+		"lodash/import-scope": ["warn", "member"],
+
+		"ramda/always-simplification": "warn",
+		"ramda/any-pass-simplification": "warn",
+		"ramda/both-simplification": "warn",
+		"ramda/complement-simplification": "warn",
+		"ramda/compose-pipe-style": "off",
+		"ramda/compose-simplification": "warn",
+		"ramda/cond-simplification": "warn",
+		"ramda/either-simplification": "warn",
+		"ramda/eq-by-simplification": "warn",
+		"ramda/filter-simplification": "warn",
+		"ramda/if-else-simplification": "warn",
+		"ramda/map-simplification": "warn",
+		"ramda/merge-simplification": "warn",
+		"ramda/no-redundant-and": "warn",
+		"ramda/no-redundant-not": "warn",
+		"ramda/no-redundant-or": "warn",
+		"ramda/pipe-simplification": "warn",
+		"ramda/prefer-both-either": "warn",
+		"ramda/prefer-complement": "warn",
+		"ramda/prefer-ramda-boolean": "off",
+		"ramda/prop-satisfies-simplification": "warn",
+		"ramda/reduce-simplification": "warn",
+		"ramda/reject-simplification": "warn",
+		"ramda/set-simplification": "warn",
+		"ramda/unless-simplification": "warn",
+		"ramda/when-simplification": "warn"
+	}
+}
