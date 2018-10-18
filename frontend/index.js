@@ -1,11 +1,15 @@
 
 import once from 'lodash/once';
+import asyncModuleTest from './asyncModuleTest/asyncModuleTest.async';
+
 
 (async function () {
 
-    let service = await import('./asyncModuleTest').default;
     once(() => {});
-    console.log(service);
+
+    document.addEventListener('click', async () => {
+        await asyncModuleTest();
+    });
 
     document.body.innerHTML = '444444';
 

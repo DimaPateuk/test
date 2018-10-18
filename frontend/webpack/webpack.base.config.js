@@ -17,10 +17,13 @@ module.exports = {
     output: {
         path: resolve(__dirname, '../dist'),
         filename: '[name].bundle.js',
-        chunkFilename: '[name].bundle.js',
+        chunkFilename: '[name].[chunkhash].bundle.js',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
+        alias: {
+            src: resolve(__dirname, '../'),
+        },
     },
     resolveLoader: {
         modules: ['node_modules', resolve(__dirname, 'loaders')],
@@ -79,12 +82,6 @@ module.exports = {
                     name: 'vendor',
                     test: /node_modules/,
                     priority: 20,
-                },
-                asyncModuleTest1: {
-                    chunks: 'all',
-                    name: 'asyncModuleTest1',
-                    test: /asyncModuleTest1/,
-                    priority: 15,
                 },
                 common: {
                     name: 'common',

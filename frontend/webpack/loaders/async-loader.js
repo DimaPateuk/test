@@ -1,11 +1,12 @@
-const buildAsyncModule = (module) =>
-    `export default import(/* webpackChunkName: "${module}" */'${module}'));`;
+const { basename } = require('path');
 
-let c = 10;
+const buildAsyncModule = (bundleName, path) =>
+    `export default () => import(/* webpackChunkName: "${bundleName}" */'${path}');`;
+
 
 module.exports = function (input) {
     const { path } = JSON.parse(input);
-    // const bundleName = basename(this.resource, '.async');
+    const bundleName = basename(this.resource, '.async');
 
-    return buildAsyncModule(c--, path);
+    return buildAsyncModule(bundleName, path);
 };

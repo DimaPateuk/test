@@ -1,4 +1,5 @@
 import once from 'lodash/once';
+import asyncModuleTest1 from '../asyncModuleTest1/asyncModuleTest1.async';
 once(() => {});
 
 
@@ -9,7 +10,7 @@ console.log('async module test pass');
 
     await Promise.resolve();
     document.addEventListener('click', async () => {
-        await import('../asyncModuleTest1');
+        await asyncModuleTest1();
     });
     document.body.innerHTML = 'async module test pass';
 })();
