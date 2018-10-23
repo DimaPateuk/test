@@ -13,7 +13,6 @@ module.exports = {
         port: 9000,
         contentBase: path.join(__dirname, 'dist'),
         publicPath: '/',
-        // open: true,
-        // openPage: 'index.html',
+        open: true,
     },
 };
