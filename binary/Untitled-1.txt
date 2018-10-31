@@ -1,0 +1,37 @@
+`Up/Down
+Rise/Fall
+"contract_type":"CALL"
+"contract_type":"PUT"
+
+Toutch/No Touch
+"contract_type":"ONETOUCH"
+"contract_type":"NOTOUCH"
+
+In/Out
+Ends In/Out
+"contract_type":"EXPIRYRANGE"
+"contract_type":"EXPIRYMISS
+Stays In/Goes Out
+contract_type":"RANGE"
+"contract_type":"UPORDOWN"
+
+Asians
+"contract_type":"ASIANU"
+"contract_type":"ASIAND"
+
+Digits
+Matches/Differs
+"contract_type":"DIGITMATCH"
+"contract_type":"DIGITDIFF"
+Even/Odd
+"contract_type":"DIGITODD"
+"contract_type":"DIGITEVEN"
+Over/Under
+"contract_type":"DIGITOVER"
+"contract_type":"DIGITUNDER"
+
+Spreads
+"contract_type":"SPREADU"
+"contract_type":"SPREADD"`
+
+Regards
