@@ -1,49 +1,70 @@
+import React from "react";
+import ReactDOM from "react-dom";
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter, Switch, NavLink as Link, Route, Redirect } from 'react-router-dom';
-import loadable from 'react-loadable';
-
-import asyncModuleTest from './asyncModuleTest/asyncModuleTest.async';
-asyncModuleTest();
-const LoadingComponent = () => <h3>please wait...</h3>;
-
-const AsyncHomeComponent = loadable( {
-    loader: () => import( './home' ),
-    loading: LoadingComponent,
-} );
-
-const AsyncAboutComponent = loadable( {
-    loader: () => import( './about' ),
-    loading: LoadingComponent,
-} );
-
-const AsyncContactComponent = loadable( {
-    loader: () => import( './contact' ),
-    loading: LoadingComponent,
-} );
-
+const themes = {
+    dark: {
+        background: 'darkblue',
+    },
+    light: {
+        background: 'lightblue'
+    }
+};
+const ThemeContext = React.createContext({
+    theme: themes.dark,
+    toggleTheme: () => {}
+});
 class App extends React.Component {
-    render() {
-        return(
-            <HashRouter>
-                <div className="content">
-                    <div className="menu">
-                        <Link exact to="/" activeClassName="active">Home</Link>
-                        <Link to="/about" activeClassName="active">About</Link>
-                        <Link to="/contact" activeClassName="active">Contact</Link>
-                    </div>
+    constructor(props) {
+        super(props);
 
-                    <Switch>
-                        <Route exact path="/" component={ AsyncHomeComponent } />
-                        <Route path="/about" component={ AsyncAboutComponent } />
-                        <Route path="/contact" component={ AsyncContactComponent } />
-                    </Switch>
-                </div>
-            </HashRouter>
+        this.toggleTheme = () => {
+            this.setState(state => ({
+                theme: state.theme === themes.dark ? themes.light : themes.dark
+            }));
+        };
+
+        // State also contains the updater function so it will
+        // be passed down into the context provider
+        this.state = {
+            theme: themes.light,
+            toggleTheme: this.toggleTheme
+        };
+    }
+
+    render() {
+        // The entire state is passed to the provider
+        return (
+            <ThemeContext.Provider value={this.state}>
+                <Content />
+            </ThemeContext.Provider>
         );
     }
 }
-const app = document.createElement('div');
+
+function ThemeTogglerButton() {
+    // The Theme Toggler Button receives not only the theme
+    // but also a toggleTheme function from the context
+    return (
+        <ThemeContext.Consumer>
+            {({ theme, toggleTheme }) => (
+                <button
+                    onClick={toggleTheme}
+                    style={{ backgroundColor: theme.background }}
+                >
+                    Toggle Theme
+                </button>
+            )}
+        </ThemeContext.Consumer>
+    );
+}
+
+function Content() {
+    return (
+        <div>
+            <ThemeTogglerButton />
+        </div>
+    );
+}
+const app = document.createElement("div");
 document.body.appendChild(app);
-ReactDOM.render( <App />, app );
+ReactDOM.render(<App />, app);

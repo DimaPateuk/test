@@ -2,6 +2,7 @@ const fs = require('fs');
 
 var exports = module.exports = {};
 
+const h = 3*60*60*1000;
 exports.time = function time(date) {
     return date
         ? new Date(+new Date(date))

@@ -10,13 +10,14 @@ module.exports = async function parseInvesting () {
     await page.goto(url);
 
     try {
-
-        await page.click('#timeFrame_thisWeek');
-        await new Promise(res => setTimeout(res, 3000));
+        // await new Promise(res => setTimeout(res, 6000));
+        // await page.click('#timeFrame_thisWeek');
+        // await new Promise(res => setTimeout(res, 6000));
         const html = await page.$eval('tbody[pageStartAt]', e => e.outerHTML);
         const body = JSDOM.fragment(html);
         var events = body.querySelectorAll('tr[data-event-datetime]')
         var mapEvents = {};
+
         events.forEach((item) => {
             const dateAttr = item.getAttribute('data-event-datetime');
             const timeStemp = +time(dateAttr);
@@ -38,7 +39,7 @@ module.exports = async function parseInvesting () {
         //console.log(mapEvents);
         return mapEvents;
     } catch (e) {
-        console.log(e);
+        throw e;
     }
 
     await browser.close();

@@ -1,8 +1,9 @@
 const path = require('path');
 const registrator = require("./binaryApp");
 const parseInvesting = require("./parseInvesting");
-const { time, getYoutubeLikeToDisplay } = require('./utils');
+const { time, getYoutubeLikeToDisplay, tryAfterSomeTime } = require('./utils');
 
+let count = 0;
 class Buyer {
     constructor(data) {
         this.data = data;
@@ -14,38 +15,55 @@ class Buyer {
     startChecking() {
         this.resetClosestEventInterval = setInterval(() => {
             this.closestEvent = null;
-        }, 10000);
-        this.interval = setInterval(() => {
-            const keys = Object.keys(this.data);
+
             const currentTime = time();
             const currentTimeStamp = +currentTime;
 
-            keys.forEach(key => {
-                if (this.contractsInProgress[key] || this.contractsDone[key]) {
-                    return;
-                }
+            console.log(`time to closest event: ${getYoutubeLikeToDisplay(10 * 60 * 1000 - (currentTimeStamp - this.currentTimeStamp))}`);
 
-                const timeStemp = parseInt(key, 10);
-                const diff = currentTimeStamp - timeStemp;
-                if (diff <= 0 && !this.closestEvent) {
-                    this.closestEvent = this.data[key];
-                    //console.log(`currentTime: ${currentTime}`);
-                    //console.log(`time to closest event: ${getYoutubeLikeToDisplay(-1*diff)}`);
-                    //console.log(this.closestEvent);
-                }
+        }, 10000);
+        this.currentTime = time();
+        this.currentTimeStamp = +this.currentTime;
+        registrator.regestrBuy(count++, { value: 'test' }, this.currentTimeStamp);
+        this.interval = setInterval(() => {
+            this.currentTime = time();
+            this.currentTimeStamp = +this.currentTime;
+            registrator.regestrBuy(count++, { value: 'test' }, this.currentTimeStamp);
 
-                if (diff > -50 && diff < 300) {
-                    this.contractsInProgress[key] = {};
-                    registrator.regestrBuy(key, this.data[key], currentTimeStamp);
-                }
-            });
-        }, 100);
+
+
+            // const keys = Object.keys(this.data);
+            // const currentTime = time();
+            // const currentTimeStamp = +currentTime;
+
+            // keys.forEach(key => {
+            //     if (this.contractsInProgress[key] || this.contractsDone[key]) {
+            //         return;
+            //     }
+
+            //     const timeStemp = parseInt(key, 10);
+            //     const diff = currentTimeStamp - timeStemp;
+            //     if (diff <= 0 && !this.closestEvent) {
+            //         this.closestEvent = this.data[key];
+            //         // console.log(`currentTime: ${currentTime}`);
+            //         console.log(`time to closest event: ${getYoutubeLikeToDisplay(-1*diff)}`);
+            //         // console.log(this.closestEvent);
+            //     }
+
+            //     if (diff > -50 && diff < 300) {
+            //         this.contractsInProgress[key] = {};
+            //         registrator.regestrBuy(key, this.data[key], currentTimeStamp);
+            //     }
+
+            // });
+
+
+        }, 10 * 60 * 1000);
     }
 
     async parseInvesting() {
-        const data = await parseInvesting();
-        this.data = data;
-        this.data[+time() + 5000] = {};
+        //const data = await parseInvesting();
+        //this.data = data;
     }
 
     restart () {

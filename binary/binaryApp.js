@@ -27,10 +27,45 @@ const createProposalOpenContractFlow = (contract_id) => jsonFlow
     .pipe(filter(data => data.msg_type === 'proposal_open_contract' && data.echo_req.contract_id === contract_id));
 const authorizeFlow = jsonFlow.pipe(filter(data => data.msg_type === 'authorize'));
 
+const ticksHistoryFlow = jsonFlow.pipe(filter(data => data.msg_type === 'candles'));
+
+// ticksHistoryFlow.subscribe(
+//     ({candles}) => {
+//         var t = candles.reduce((res, item) => {
+//             const {high, low} = item;
+
+//             const result = (high - low) - 2.25;
+//             if (result < 0) {
+//                 res.minus +=result;
+//             } else {
+//                 res.plus +=result;
+//             }
+
+//             return res;
+//         }, {
+//             minus: 0,
+//             plus: 0
+//         });
+
+//         console.log(t);
+//     }
+// );
+
 authorizeFlow.subscribe(
     ({authorize}) => {
         console.log('authorize');
         account = authorize;
+
+
+        // ws.send(toStr({
+        //     "ticks_history": "R_10",
+        //     "end": "latest",
+        //     "start": 1,
+        //     "style": "candles",
+        //     "adjust_start_time": 1,
+        //     "count": 5000,
+        //     "granularity": 120
+        // }));
     },
     e => console.log('authorizeFlow onError: %s', e),
     () => console.log('authorizeFlow onCompleted')
@@ -38,10 +73,10 @@ authorizeFlow.subscribe(
 
 proposalWithBuyFlow.subscribe(
     ({proposal}) => {
-        console.log('proposal', proposal.id)
+      console.log('proposal', proposal.id)
         ws.send(toStr({
             buy: proposal.id,
-            price: 1,
+            price: proposal.ask_price,
         }));
     },
     e => console.log('proposalWithBuyFlow onError: %s', e),
@@ -85,40 +120,29 @@ class Registrator {
         this.regestrBuy = this.regestrBuy.bind(this);
 
         this.watchContractmapMap = {};
+        this.total = 0;
     }
     regestrBuy (key, eventData, currentTimeStamp) {
-        console.log('regestrBuy', time());
-        console.log(eventData);
+
 
         if(!canProcess()) {
             return tryAfterSomeTime(() => this.regestrBuy(key, eventData, +time()));
         }
+        console.log('regestrBuy', time());
+        console.log(eventData);
+
         ws.send(toStr({
-            "proposal": 1,
-            "amount": "1",
-            "basis": "stake",
-            "contract_type":"UPORDOWN",
-            "currency": "USD",
-            "duration": "2",
-            "duration_unit": "m",
-            "barrier": "+1.65",
-            "barrier2": "-1.65",
-            "symbol": "R_10"
+          "proposal": 1,
+          "amount": "1",
+          "basis": "multiplier",
+          "contract_type": "LBHIGHLOW",
+          "currency": "USD",
+          "duration": "5",
+          "duration_unit": "m",
+          "symbol": "R_10"
         }));
-        // ws.send(toStr({
-        //     "proposal": 1,
-        //     "amount": "1",
-        //     "basis": "multiplier",
-        //     "contract_type": "LBHIGHLOW",
-        //     "currency": "USD",
-        //     "duration": "1",
-        //     "duration_unit": "m",
-        //     "symbol": "R_10"
-        // }));
 
-
-
-        this.watchContractmapMap[key] = buyFlow.subscribe(({buy}) => {
+        this.watchContractmapMap[key] = buyFlow.subscribe((buy) => {
             const { contract_id } = buy;
             ws.send(toStr({
                 "proposal_open_contract": 1,
@@ -126,16 +150,19 @@ class Registrator {
                 "subscribe": 1
             }));
             this.watchContractmapMap[key].unsubscribe();
-            this.watchContractmapMap[key] = null;
             this.watchContractmapMap[contract_id] = createProposalOpenContractFlow(contract_id)
                 .subscribe(({proposal_open_contract}) => {
-                    const { status } = proposal_open_contract;
+                    if (!proposal_open_contract) {
+                        return;
+                    }
+                    const { status, profit } = proposal_open_contract;
+                    console.log(profit);
+
                     if (status !== 'open') {
-                        appenedAsync(path.resolve(__dirname, './proposal_open_contract'), toStr(proposal_open_contract));
-                        console.log('              ', status, toStr(eventData));
-                        appenedAsync(path.resolve(__dirname, './log'), `${status}\n${toStr(eventData)}\n${currentTimeStamp}\n${time()}\n\n\n`);
+                        console.log('              ', profit);
+                        this.total += parseFloat(profit, 10);
+                        appenedAsync(path.resolve(__dirname, './log'), `${this.total}\n${toStr(proposal_open_contract)}\n\n\n`);
                         this.watchContractmapMap[contract_id].unsubscribe();
-                        this.watchContractmapMap[contract_id] = null;
                     }
                 });
         });
@@ -143,4 +170,3 @@ class Registrator {
 }
 
 module.exports = new Registrator();
-
