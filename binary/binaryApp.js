@@ -181,12 +181,12 @@ class Registrator {
         }
         //console.log(key, eventData);
 
-        if (this.w === 5) {
-            console.log('amaizing', this.total);
-            this.w = 0;
-            this.l = 0;
-            this.currentAmount = this.initialAmount;
-        }
+        // if (this.w === 5) {
+        //     console.log('amaizing', this.total);
+        //     this.w = 0;
+        //     this.l = 0;
+        //     this.currentAmount = this.initialAmount;
+        // }
 
         ws.send(toStr({
             "proposal": 1,
@@ -231,9 +231,9 @@ class Registrator {
                             this.ll = this.l < this.ll ? this.ll : this.l;
                             this.l = 0;
                             if (this.w === 1) {
-                                this.currentAmount = this.profAsNumber;
+                                this.currentAmount = this.profAsNumber / 2;
                             } else {
-                                this.currentAmount = this.currentAmount + this.profAsNumber;
+                                this.currentAmount = (parseFloat(this.currentAmount + (this.profAsNumber / 2)), 10).toFixed(2);
                             }
 
                         } else {
