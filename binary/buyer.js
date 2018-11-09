@@ -13,52 +13,20 @@ class Buyer {
     }
 
     startChecking() {
-        this.resetClosestEventInterval = setInterval(() => {
-            this.closestEvent = null;
-
-            const currentTime = time();
-            const currentTimeStamp = +currentTime;
-
-            console.log(`time to closest event: ${getYoutubeLikeToDisplay(10 * 60 * 1000 - (currentTimeStamp - this.currentTimeStamp))}`);
-
-        }, 10000);
         this.currentTime = time();
         this.currentTimeStamp = +this.currentTime;
-        registrator.regestrBuy(count++, { value: 'test' }, this.currentTimeStamp);
+        this.count = 1;
+
         this.interval = setInterval(() => {
             this.currentTime = time();
             this.currentTimeStamp = +this.currentTime;
-            registrator.regestrBuy(count++, { value: 'test' }, this.currentTimeStamp);
+            registrator.regestrBuy(count++, { value: 'test' + count }, this.currentTimeStamp);
 
+            // if (--this.count === 0) {
+            //     clearInterval(this.interval);
+            // }
 
-
-            // const keys = Object.keys(this.data);
-            // const currentTime = time();
-            // const currentTimeStamp = +currentTime;
-
-            // keys.forEach(key => {
-            //     if (this.contractsInProgress[key] || this.contractsDone[key]) {
-            //         return;
-            //     }
-
-            //     const timeStemp = parseInt(key, 10);
-            //     const diff = currentTimeStamp - timeStemp;
-            //     if (diff <= 0 && !this.closestEvent) {
-            //         this.closestEvent = this.data[key];
-            //         // console.log(`currentTime: ${currentTime}`);
-            //         console.log(`time to closest event: ${getYoutubeLikeToDisplay(-1*diff)}`);
-            //         // console.log(this.closestEvent);
-            //     }
-
-            //     if (diff > -50 && diff < 300) {
-            //         this.contractsInProgress[key] = {};
-            //         registrator.regestrBuy(key, this.data[key], currentTimeStamp);
-            //     }
-
-            // });
-
-
-        }, 10 * 60 * 1000);
+        }, 15000);
     }
 
     async parseInvesting() {
