@@ -36,13 +36,13 @@ const ticksFlow = jsonFlow.pipe(filter(data => data.msg_type === 'tick'));
 
 jsonFlowError.subscribe(
     (data) => {
-        console.log(data);
+        //console.log(data);
     }
 );
 
 authorizeFlow.subscribe(
     ({authorize}) => {
-        console.log('authorize');
+        //console.log('authorize');
         account = authorize;
 
 
@@ -55,9 +55,7 @@ authorizeFlow.subscribe(
         //     "count": 5000,
         //     "granularity": 120
         // }));
-    },
-    e => console.log('authorizeFlow onError: %s', e),
-    () => console.log('authorizeFlow onCompleted')
+    }
 );
 
 proposalWithBuyFlow.subscribe(
@@ -88,12 +86,12 @@ function createConnection () {
 
     ws.on('close', function close() {
         account = null;
-        console.log('try to reconect', time());
+        //console.log('try to reconect', time());
         createConnection();
     });
 
     ws.on('error', function error(e) {
-        console.log('error', time());
+        //console.log('error', time());
     });
 }
 
@@ -105,6 +103,8 @@ function canProcess() {
 
 class Registrator {
     constructor () {
+        this.anaizingShown = false;
+
         this.regestrBuy = this.regestrBuy.bind(this);
 
         this.watchContractmapMap = {};
@@ -122,6 +122,14 @@ class Registrator {
 
         this.ll = 0;
         this.ww = 0;
+
+        this.statistic = {};
+
+
+        for(var i = 0; i < 20; i++) {
+            this.statistic[i] = 0;
+        }
+
 
         ticksHistoryFlow.subscribe((data) => {
             this.prices = data.history.prices;
@@ -147,22 +155,6 @@ class Registrator {
             this.prediction = prediction;
 
         });
-        //this.sybscribeToTickHistory();
-    }
-
-    sybscribeToTickHistory () {
-        if(!canProcess()) {
-            return tryAfterSomeTime(() => this.sybscribeToTickHistory());
-        }
-        ws.send(toStr({
-            "ticks_history": "R_10",
-            "end": "latest",
-            "start": 1,
-            "style": "ticks",
-            "adjust_start_time": 1,
-            "count": 5000,
-            "subscribe": 1
-        }));
     }
 
     getNumber () {
@@ -181,25 +173,46 @@ class Registrator {
         }
         //console.log(key, eventData);
 
-        // if (this.w === 5) {
+        // if (this.w === 3) {
+        //     if (!this.anaizingShown) {
+        //         console.log('amaizing', this.total);
+        //         this.anaizingShown = true;
+        //     }
+
+        //     return;
+
         //     console.log('amaizing', this.total);
+        //     this.anaizingShown = true;
         //     this.w = 0;
         //     this.l = 0;
         //     this.currentAmount = this.initialAmount;
         // }
 
+        if (this.stopActivity) return;
+
+        if (this.w === 3) {
+            console.log('amaizing', this.total);
+            this.w = 0;
+            this.l = 0;
+            this.currentAmount = this.initialAmount;
+
+            this.stopActivity = true;
+            setTimeout(() => {
+                this.stopActivity = false;
+            }, 15 * 60 * 1000);
+        }
+
         ws.send(toStr({
             "proposal": 1,
-            "amount": this.currentAmount,
+            "amount": this.currentAmount.toFixed(2),
             "basis": "stake",
-            // "contract_type": "DIGITMATCH",
-            "contract_type": "DIGITEVEN",
+            // "contract_type": "DIGITEVEN",
+            // "contract_type": "DIGITODD",
+            "contract_type": Math.random() > 0.5 ? "DIGITEVEN" : "DIGITODD",
             "currency": "USD",
             "duration": "5",
             "duration_unit": "t",
             "symbol": "R_100",
-            // "barrier": this.prediction
-            // "barrier": this.getNumber()
         }));
 
 
@@ -210,7 +223,7 @@ class Registrator {
             if (this.watchContractmapMap[contract_id]) {
                 return;
             }
-            // console.log(buy);
+            //console.log(buy);
             ws.send(toStr({
                 "proposal_open_contract": 1,
                 "contract_id": contract_id,
@@ -231,9 +244,10 @@ class Registrator {
                             this.ll = this.l < this.ll ? this.ll : this.l;
                             this.l = 0;
                             if (this.w === 1) {
-                                this.currentAmount = this.profAsNumber / 2;
+                                this.currentAmount = this.profAsNumber;
                             } else {
-                                this.currentAmount = (parseFloat(this.currentAmount + (this.profAsNumber / 2)), 10).toFixed(2);
+                                this.currentAmount = this.currentAmount + this.profAsNumber;
+                                //console.log('next bet', this.currentAmount);
                             }
 
                         } else {
@@ -243,7 +257,7 @@ class Registrator {
                             this.currentAmount = this.initialAmount;
                         }
                         this.total += this.profAsNumber;
-                        console.log('              ', this.total, profit);
+                        //console.log('              ', this.total, profit);
                         this.watchContractmapMap[contract_id].unsubscribe();
                         this.watchContractmapMap[contract_id] = null;
                     }
